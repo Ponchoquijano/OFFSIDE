@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFFSIDE 2026 | SOS · Emergencias</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 🚨 HACK WORDPRESS 🚨 */
+        header#masthead, header.site-header, .elementor-location-header, header[data-elementor-type="header"], .ast-primary-header-bar, .site-header { display: none !important; opacity: 0 !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
+        .site-content, .site-main, #content, body { margin-top: 0 !important; padding-top: 0 !important; }
+
+        :root{--mx-green:#ff0000;--mx-red:#ce1126;--mx-gold:#fa0000;--mx-dark:#000000;--mx-gradient:linear-gradient(135deg,var(--mx-green),#ad2121,var(--mx-gold));--border:1px solid rgba(255,255,255,0.1);--text-main:#f0ede8;--text-dim:#8a9e94;}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+        body{background-color:var(--mx-dark);color:var(--text-main);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;cursor:none;line-height:1.6;padding-bottom:120px;margin-top:0;}
+        #custom-cursor{width:10px;height:10px;background:var(--mx-red);border-radius:50%;position:fixed;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);box-shadow:0 0 15px rgba(206,17,38,0.8);transition:width .3s,height .3s,background-color .3s;}
+        #custom-cursor.hovered{width:26px;height:26px;background:var(--mx-gold);box-shadow:0 0 25px rgba(245,166,35,0.8);}
+        #cursor-glow{width:500px;height:500px;background:radial-gradient(circle,rgba(206,17,38,.1) 0,rgba(245,166,35,.04) 40%,transparent 65%);position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+        #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:0;}
+        section{padding:80px 10%;position:relative;z-index:1;}
+        .section-header{text-align:center;margin-bottom:50px;}
+        .section-header h2{font-family:'Syne',sans-serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:800;margin-bottom:16px;color:#fff !important;}
+        .section-header p{color:var(--text-dim) !important;font-size:1.05rem;}
+        .gradient-text-red{background:linear-gradient(135deg,var(--mx-red),#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .gsap-anim-up{opacity:0;transform:translateY(40px);}
+
+        /* BOTÓN SOS PRINCIPAL */
+        .sos-hero{text-align:center;padding:60px 10% 20px;position:relative;z-index:1;}
+        .sos-btn-main{width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,var(--mx-red),#ff2244);border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 30px;box-shadow:0 0 0 0 rgba(206,17,38,0.5);animation:pulse-sos 2s infinite;transition:.3s;position:relative;}
+        .sos-btn-main:hover{transform:scale(1.05);}
+        .sos-btn-main i{font-size:3rem;color:#fff;display:block;margin-bottom:8px;}
+        .sos-btn-main span{color:#fff;font-weight:800;font-size:1.1rem;text-transform:uppercase;letter-spacing:2px;}
+        @keyframes pulse-sos{0%{box-shadow:0 0 0 0 rgba(206,17,38,0.6);}70%{box-shadow:0 0 0 30px rgba(206,17,38,0);}100%{box-shadow:0 0 0 0 rgba(206,17,38,0);}}
+        .sos-subtitle{color:var(--text-dim) !important;font-size:.9rem;margin-top:10px;}
+
+        /* NÚMEROS DE EMERGENCIA */
+        .emergency-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-bottom:40px;}
+        .emergency-card{background:rgba(255,255,255,0.02);border:var(--border);border-radius:20px;padding:24px;transition:.3s;cursor:pointer;text-decoration:none;display:block;}
+        .emergency-card:hover{border-color:rgba(206,17,38,.4);background:rgba(206,17,38,0.05);transform:translateY(-4px);}
+        .emergency-card.green:hover{border-color:rgba(0,104,71,.4);background:rgba(0,104,71,0.05);}
+        .emergency-card.gold:hover{border-color:rgba(245,166,35,.4);background:rgba(245,166,35,0.05);}
+        .emer-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px;}
+        .emer-icon.red{background:rgba(206,17,38,0.2);}
+        .emer-icon.green{background:rgba(0,104,71,0.2);}
+        .emer-icon.gold{background:rgba(245,166,35,0.15);}
+        .emer-icon.blue{background:rgba(59,130,246,0.2);}
+        .emergency-card h3{font-size:1rem;font-weight:700;color:#fff !important;margin-bottom:4px;}
+        .emergency-card p{font-size:.8rem;color:var(--text-dim) !important;margin-bottom:12px;}
+        .emer-number{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;display:block;}
+        .emer-number.red{color:var(--mx-red) !important;}
+        .emer-number.green{color:#4ade80 !important;}
+        .emer-number.gold{color:var(--mx-gold) !important;}
+        .emer-number.blue{color:#60a5fa !important;}
+
+        /* CONSEJOS DE SEGURIDAD */
+        .tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+        .tip-card{background:rgba(255,255,255,0.02);border:var(--border);border-radius:18px;padding:22px;transition:.3s;}
+        .tip-card:hover{background:rgba(255,255,255,0.04);}
+        .tip-card i{font-size:1.5rem;color:var(--mx-gold);margin-bottom:12px;display:block;}
+        .tip-card h4{font-size:.95rem;font-weight:700;color:#fff !important;margin-bottom:8px;}
+        .tip-card p{font-size:.82rem;color:var(--text-dim) !important;line-height:1.6;}
+
+        .notif{position:fixed;bottom:100px;right:30px;z-index:9000;display:flex;flex-direction:column;gap:10px;}
+        .notif-item{background:#0e1a13;border:var(--border);border-left:3px solid var(--mx-red);border-radius:14px;padding:14px 18px;max-width:300px;transform:translateX(120%);transition:.4s;}
+        .notif-item.show{transform:translateX(0);}
+        .notif-item h4{font-size:.88rem;color:#fff !important;}
+        .notif-item p{font-size:.78rem;color:var(--text-dim) !important;}
+
+        /* DOCK MACOS */
+        .bottom-nav-deck{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:clamp(10px,2vw,18px);background:rgba(10,15,13,0.65);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);padding:10px 20px;border-radius:40px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 20px 40px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.1);z-index:9000;transition:all .4s;} .bottom-nav-deck:hover{background:rgba(10,15,13,0.85);border-color:rgba(255,255,255,0.2);} .deck-item{color:var(--text-dim);text-decoration:none;font-size:1.25rem;width:45px;height:45px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .3s ease;position:relative;cursor:none;} .deck-item:hover,.deck-item.active{color:#fff;background:rgba(255,255,255,0.1);transform:translateY(-5px) scale(1.1);} .deck-item::after{content:attr(data-tooltip);position:absolute;top:-45px;background:rgba(0,0,0,0.8);color:#fff;font-size:.75rem;font-weight:600;padding:6px 12px;border-radius:8px;opacity:0;pointer-events:none;transform:translateY(10px);transition:all .3s;white-space:nowrap;border:1px solid rgba(255,255,255,0.1);} .deck-item:hover::after{opacity:1;transform:translateY(0);} .deck-item.home-btn{background:var(--mx-gradient);color:#fff!important;width:55px;height:55px;font-size:1.4rem;transform:translateY(-15px);box-shadow:0 10px 25px rgba(0,104,71,0.5);border:3px solid var(--mx-dark);} .deck-item.home-btn:hover{transform:translateY(-20px) scale(1.05);} .deck-item.emergency{color:var(--mx-red);} .deck-item.emergency.active{background:rgba(206,17,38,0.2);color:#ff4d4d;} .deck-item.emergency:hover{background:rgba(206,17,38,0.15);color:#ff4d4d;}
+        @media(max-width:600px){section{padding:60px 5%;}.sos-hero{padding:40px 5% 10px;}.sos-btn-main{width:140px;height:140px;}.sos-btn-main i{font-size:2.2rem;}.bottom-nav-deck{width:95%;padding:8px 12px;gap:5px;border-radius:30px;bottom:15px;}.deck-item{width:38px;height:38px;font-size:1.1rem;}.deck-item.home-btn{width:48px;height:48px;font-size:1.2rem;transform:translateY(-10px);}.deck-item::after{display:none;}}
+    </style>
+</head>
+<body>
+    <div id="custom-cursor"></div><div id="cursor-glow"></div><canvas id="bg-canvas"></canvas><div class="notif" id="notifContainer"></div>
+
+    <nav class="bottom-nav-deck">
+        <a href="restaurantes.html" class="deck-item hover-trigger" data-tooltip="Comida"><i class="fas fa-utensils"></i></a>
+        <a href="mapa.html" class="deck-item hover-trigger" data-tooltip="Mapa"><i class="fas fa-map-marker-alt"></i></a>
+        <a href="index.html" class="deck-item home-btn hover-trigger" data-tooltip="Inicio"><i class="fas fa-home"></i></a>
+        <a href="wallet.html" class="deck-item hover-trigger" data-tooltip="Wallet"><i class="fas fa-wallet"></i></a>
+        <a href="sos.html" class="deck-item emergency active hover-trigger" data-tooltip="SOS"><i class="fas fa-shield-alt"></i></a>
+    </nav>
+
+    <!-- BOTÓN SOS -->
+    <div class="sos-hero gsap-anim-up">
+        <button class="sos-btn-main hover-trigger" onclick="activateSOS()">
+            <i class="fas fa-shield-alt"></i>
+            <span>SOS</span>
+        </button>
+        <p style="color:#fff;font-weight:700;font-size:1.1rem;">Presiona en caso de emergencia</p>
+        <p class="sos-subtitle">Se compartirá tu ubicación con los servicios de emergencia</p>
+    </div>
+
+    <section id="sos">
+        <div class="section-header gsap-anim-up">
+            <h2>Números de <span class="gradient-text-red">Emergencia</span></h2>
+            <p>Guarda estos contactos · Toca para llamar</p>
+        </div>
+
+        <div class="emergency-grid gsap-anim-up">
+            <a href="tel:911" class="emergency-card hover-trigger">
+                <div class="emer-icon red"><i class="fas fa-ambulance" style="color:var(--mx-red);"></i></div>
+                <h3>Emergencias General</h3>
+                <p>Policía, Bomberos y Ambulancia</p>
+                <span class="emer-number red">911</span>
+            </a>
+            <a href="tel:5552095200" class="emergency-card green hover-trigger">
+                <div class="emer-icon green"><i class="fas fa-user-shield" style="color:#4ade80;"></i></div>
+                <h3>Policía Turística CDMX</h3>
+                <p>Atención especial a visitantes extranjeros</p>
+                <span class="emer-number green">55 5209 5200</span>
+            </a>
+            <a href="tel:078" class="emergency-card gold hover-trigger">
+                <div class="emer-icon gold"><i class="fas fa-info-circle" style="color:var(--mx-gold);"></i></div>
+                <h3>Locatel · Info Ciudad</h3>
+                <p>Asistencia e información de la ciudad</p>
+                <span class="emer-number gold">078</span>
+            </a>
+            <a href="tel:5553459010" class="emergency-card hover-trigger">
+                <div class="emer-icon blue"><i class="fas fa-passport" style="color:#60a5fa;"></i></div>
+                <h3>Embajada · Servicios</h3>
+                <p>Contacto consular para extranjeros</p>
+                <span class="emer-number blue">55 5345 9010</span>
+            </a>
+            <a href="tel:800911" class="emergency-card green hover-trigger">
+                <div class="emer-icon green"><i class="fas fa-fire-extinguisher" style="color:#4ade80;"></i></div>
+                <h3>Bomberos CDMX</h3>
+                <p>Incendios y rescate de personas</p>
+                <span class="emer-number green">800 911</span>
+            </a>
+            <a href="tel:5557724336" class="emergency-card hover-trigger">
+                <div class="emer-icon red"><i class="fas fa-hospital" style="color:var(--mx-red);"></i></div>
+                <h3>Cruz Roja Mexicana</h3>
+                <p>Urgencias médicas y traslados</p>
+                <span class="emer-number red">55 5772 4336</span>
+            </a>
+        </div>
+
+        <!-- Consejos de seguridad -->
+        <div class="section-header gsap-anim-up" style="margin-top:20px;">
+            <h2>Consejos de <span class="gradient-text-red">Seguridad</span></h2>
+            <p>Viaja tranquilo y disfruta México con precaución</p>
+        </div>
+        <div class="tips-grid gsap-anim-up">
+            <div class="tip-card"><i class="fas fa-map-marked-alt"></i><h4>Comparte tu ubicación</h4><p>Informa a alguien de confianza tu ubicación antes de salir, especialmente de noche o a zonas desconocidas.</p></div>
+            <div class="tip-card"><i class="fas fa-wallet"></i><h4>Cuida tus pertenencias</h4><p>Lleva solo el efectivo necesario. Usa ropa sin llamar la atención y guarda tu pasaporte en el hotel.</p></div>
+            <div class="tip-card"><i class="fas fa-taxi"></i><h4>Solo taxis oficiales</h4><p>Usa Uber, DiDi o taxis del sitio. Nunca abordes taxis de la calle ("libres") especialmente de noche.</p></div>
+            <div class="tip-card"><i class="fas fa-phone-alt"></i><h4>Ten cargado el celular</h4><p>Mantén tu teléfono con batería suficiente. Lleva un cargador portátil y ten esta app activa en todo momento.</p></div>
+            <div class="tip-card"><i class="fas fa-water"></i><h4>Agua embotellada</h4><p>Bebe solo agua embotellada o purificada. El hielo en restaurantes reconocidos es generalmente seguro.</p></div>
+            <div class="tip-card"><i class="fas fa-shield-alt"></i><h4>Zonas seguras</h4><p>Polanco, Condesa, Roma, Santa Fe y el Centro Histórico son zonas con mayor vigilancia para turistas.</p></div>
+        </div>
+    </section>
+
+    <script>
+        const cursor=document.getElementById('custom-cursor');const glow=document.getElementById('cursor-glow');let mx=0,my=0;
+        document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';glow.animate({left:`${mx}px`,top:`${my}px`},{duration:800,fill:'forwards'});});
+        document.querySelectorAll('.hover-trigger,a,button,select,input').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hovered'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hovered'));});
+        const canvas=document.getElementById('bg-canvas');const ctx=canvas.getContext('2d');let stars=[];
+        class Star{constructor(){this.x=Math.random()*window.innerWidth;this.y=Math.random()*window.innerHeight;this.size=Math.random()*1.5;this.baseX=this.x;this.baseY=this.y;this.density=Math.random()*30+1;this.color=Math.random()>.8?'#ce1126':Math.random()>.5?'#006847':'#fff';}draw(){ctx.fillStyle=this.color;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,2*Math.PI);ctx.fill();}update(){let dx=mx-this.x,dy=my-this.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){this.x-=dx/dist*((120-dist)/120)*this.density;this.y-=dy/dist*((120-dist)/120)*this.density;}else{this.x+=.05*(this.baseX-this.x);this.y+=.05*(this.baseY-this.y);}}}
+        function initStars(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;stars=[];for(let i=0;i<200;i++)stars.push(new Star());}
+        function animateStars(){ctx.clearRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{s.update();s.draw();});requestAnimationFrame(animateStars);}
+        window.addEventListener('resize',initStars);initStars();animateStars();
+        function activateSOS(){showNotif('🆘 SOS Activado','Ubicación compartida con servicios de emergencia. Marcando 911...','error');setTimeout(()=>window.location.href='tel:911',1500);}
+        function showNotif(title,msg,type='success'){const container=document.getElementById('notifContainer');const el=document.createElement('div');el.className='notif-item';el.style.borderLeftColor=type==='success'?'var(--mx-green)':type==='warn'?'var(--mx-gold)':'var(--mx-red)';el.innerHTML=`<h4>${title}</h4><p>${msg}</p>`;container.appendChild(el);setTimeout(()=>el.classList.add('show'),50);setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),400);},4000);}
+        gsap.registerPlugin(ScrollTrigger);gsap.utils.toArray('.gsap-anim-up').forEach(el=>{gsap.fromTo(el,{opacity:0,y:40},{opacity:1,y:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}});});
+    </script>
+</body>
+</html>

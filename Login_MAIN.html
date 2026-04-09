@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFFSIDE 2026 | Iniciar Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- REEMPLAZA TU_CLIENT_ID con el OAuth Client ID real de Google Cloud Console -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        /* 🚨 HACK WORDPRESS 🚨 */
+        header#masthead, header.site-header, .elementor-location-header, header[data-elementor-type="header"], .ast-primary-header-bar, .site-header { display: none !important; opacity: 0 !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
+        .site-content, .site-main, #content, body { margin-top: 0 !important; padding-top: 0 !important; }
+
+        :root {
+            --mx-green: #006847;
+            --mx-red: #ce1126;
+            --mx-gold: #f5a623;
+            --mx-dark: #0a0f0d;
+            --mx-gradient: linear-gradient(135deg, var(--mx-green), #009a63, var(--mx-gold));
+            --glass: rgba(10,15,13,0.75);
+            --border: 1px solid rgba(255,255,255,0.1);
+            --text-main: #f0ede8;
+            --text-dim: #8a9e94;
+            /* Coppel */
+            --coppel-blue: #003087;
+            --coppel-yellow: #FFD100;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--mx-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            cursor: none;
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #custom-cursor { width: 10px; height: 10px; background: var(--mx-gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%,-50%); box-shadow: 0 0 15px rgba(245,166,35,0.8); transition: width .3s, height .3s, background-color .3s; }
+        #custom-cursor.hovered { width: 26px; height: 26px; background: var(--mx-red); box-shadow: 0 0 25px rgba(206,17,38,0.8); }
+        #cursor-glow { width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,104,71,.12) 0, rgba(245,166,35,.05) 40%, transparent 65%); position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: screen; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; }
+
+        /* ── LOGIN CARD ── */
+        .login-wrapper {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        /* Logo top */
+        .login-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: #fff;
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        .login-logo span {
+            background: var(--mx-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .login-tagline {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-dim);
+            margin-bottom: 36px;
+            opacity: 0;
+        }
+
+        /* Card */
+        .login-card {
+            width: 100%;
+            background: rgba(15, 22, 17, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: var(--border);
+            border-radius: 28px;
+            padding: 44px 40px 36px;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .login-card h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .login-card p {
+            font-size: .88rem;
+            color: var(--text-dim);
+            margin-bottom: 32px;
+        }
+
+        /* Google button */
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 24px;
+            background: #fff;
+            border: none;
+            border-radius: 14px;
+            color: #1a1a1a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            cursor: none;
+            transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+        }
+        .btn-google:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(245,166,35,0.25);
+        }
+        .btn-google svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        .divider span {
+            font-size: .75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Email alt (visual only) */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .input-group label {
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+        .input-group input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: .9rem;
+            outline: none;
+            transition: .3s;
+            cursor: none;
+            width: 100%;
+        }
+        .input-group input:focus {
+            border-color: var(--mx-gold);
+            background: rgba(245,166,35,0.06);
+        }
+        .input-group input::placeholder { color: rgba(255,255,255,0.25); }
+
+        .btn-mx-full {
+            width: 100%;
+            padding: 14px;
+            background: var(--mx-gradient);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            font-size: .9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: none;
+            transition: .4s;
+            box-shadow: 0 5px 20px rgba(0,104,71,.4);
+            margin-bottom: 20px;
+        }
+        .btn-mx-full:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(245,166,35,.35);
+        }
+
+        .login-terms {
+            font-size: .72rem;
+            color: var(--text-dim);
+            text-align: center;
+            line-height: 1.5;
+        }
+        .login-terms a {
+            color: var(--mx-gold);
+            text-decoration: none;
+        }
+        .login-terms a:hover { text-decoration: underline; }
+
+        /* ── COPPEL BADGE ── */
+        .coppel-badge {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+        }
+        .coppel-badge .powered {
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+        }
+        .coppel-logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--coppel-blue);
+            border-radius: 8px;
+            padding: 5px 12px;
+        }
+        .coppel-logo .coppel-text {
+            font-family: 'Syne', sans-serif;
+            font-size: .85rem;
+            font-weight: 800;
+            color: var(--coppel-yellow);
+            letter-spacing: 1px;
+        }
+        .coppel-logo .coppel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--coppel-yellow);
+        }
+
+        /* ── LOADING OVERLAY ── */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: var(--mx-dark);
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity .5s;
+        }
+        #loadingOverlay .load-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--mx-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top-color: var(--mx-gold);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Coppel badge inside card */
+        .coppel-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 24px 0 20px; }
+        .coppel-inline { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .coppel-inline .powered-txt { font-size: .72rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); }
+        .coppel-pill { display: flex; align-items: center; gap: 7px; background: var(--coppel-blue); border-radius: 50px; padding: 5px 14px 5px 10px; box-shadow: 0 4px 14px rgba(0,48,135,0.5); }
+        .coppel-pill .c-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coppel-yellow); flex-shrink: 0; }
+        .coppel-pill .c-name { font-family: 'Syne', sans-serif; font-size: .82rem; font-weight: 800; color: var(--coppel-yellow); letter-spacing: 1.5px; }
+
+        /* Coppel badge outside card (bottom) */
+        @media(max-width: 500px) {
+            .login-card { padding: 32px 24px 28px; border-radius: 24px; }
+            .login-logo { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading -->
+    <div id="loadingOverlay">
+        <div class="load-logo">OFFSIDE</div>
+        <div class="spinner"></div>
+    </div>
+
+    <div id="custom-cursor"></div>
+    <div id="cursor-glow"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- LOGIN -->
+    <div class="login-wrapper">
+
+        <div class="login-logo">OFF<span>SIDE</span></div>
+        <div class="login-tagline">Mundial 2026 · Tu guía en México</div>
+
+        <div class="login-card">
+            <h2>¡Bienvenido! 👋</h2>
+            <p>Inicia sesión para acceder a restaurantes, transporte, hospedaje y más.</p>
+
+            <!-- Google Sign-In -->
+            <button class="btn-google hover-trigger" onclick="handleGoogleLogin()">
+                <!-- Google SVG oficial -->
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    <path fill="none" d="M0 0h48v48H0z"/>
+                </svg>
+                Continuar con Google
+            </button>
+
+            <div class="divider"><span>o</span></div>
+
+            <!-- Email fallback -->
+            <div class="input-group">
+                <label>Correo electrónico</label>
+                <input type="email" id="emailInput" placeholder="tu@correo.com" class="hover-trigger">
+            </div>
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" id="passInput" placeholder="••••••••" class="hover-trigger">
+            </div>
+
+            <button class="btn-mx-full hover-trigger" onclick="handleEmailLogin()">
+                <i class="fas fa-futbol" style="margin-right:8px;"></i> Entrar a OFFSIDE
+            </button>
+
+            <div class="login-terms">
+                Al ingresar aceptas nuestros <a href="#">Términos de Servicio</a> y <a href="#">Política de Privacidad</a>.
+            </div>
+
+            <!-- Coppel inside card -->
+            <div class="coppel-divider"></div>
+            <div class="coppel-inline">
+                <span class="powered-txt">Apoyado por</span>
+                <div class="coppel-pill">
+                    <div class="c-dot"></div>
+                    <span class="c-name">COPPEL</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coppel Badge -->
+        <div class="coppel-badge">
+            <span class="powered">Impulsado por</span>
+            <div class="coppel-logo">
+                <div class="coppel-dot"></div>
+                <span class="coppel-text">COPPEL</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Google Identity Services (One Tap config) -->
+    <div id="g_id_onload"
+         data-client_id="TU_CLIENT_ID.apps.googleusercontent.com"
+         data-callback="onGoogleCredential"
+         data-auto_prompt="false">
+    </div>
+
+    <script>
+        /* ── Cursor ── */
+        const cursor = document.getElementById('custom-cursor');
+        const glow = document.getElementById('cursor-glow');
+        let mx = 0, my = 0;
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+            glow.animate({ left: `${mx}px`, top: `${my}px` }, { duration: 800, fill: 'forwards' });
+        });
+        document.querySelectorAll('.hover-trigger, a, button, input').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        /* ── Canvas Stars ── */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        class Star {
+            constructor() {
+                this.x = Math.random() * window.innerWidth; this.y = Math.random() * window.innerHeight;
+                this.size = Math.random() * 1.5; this.baseX = this.x; this.baseY = this.y;
+                this.density = Math.random() * 30 + 1;
+                this.color = Math.random() > .8 ? '#f5a623' : Math.random() > .5 ? '#006847' : '#fff';
+            }
+            draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI); ctx.fill(); }
+            update() {
+                let dx = mx - this.x, dy = my - this.y, dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) { this.x -= dx / dist * ((120 - dist) / 120) * this.density; this.y -= dy / dist * ((120 - dist) / 120) * this.density; }
+                else { this.x += .05 * (this.baseX - this.x); this.y += .05 * (this.baseY - this.y); }
+            }
+        }
+        function initStars() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = []; for (let i = 0; i < 200; i++) stars.push(new Star()); }
+        function animateStars() { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animateStars); }
+        window.addEventListener('resize', initStars); initStars(); animateStars();
+
+        /* ── Entrance animations ── */
+        window.addEventListener('load', () => {
+            const overlay = document.getElementById('loadingOverlay');
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 500);
+                gsap.to('.login-logo',    { opacity: 1, y: 0, duration: .8, ease: 'power3.out', delay: .1 });
+                gsap.to('.login-tagline', { opacity: 1, duration: .8, ease: 'power3.out', delay: .25 });
+                gsap.to('.login-card',    { opacity: 1, y: 0, duration: .9, ease: 'power3.out', delay: .35 });
+                gsap.to('.coppel-badge',  { opacity: 1, duration: .8, ease: 'power3.out', delay: .6 });
+            }, 900);
+        });
+
+        /* ── Google OAuth callback (One Tap JWT) ── */
+        function onGoogleCredential(response) {
+            if (response && response.credential) {
+                // Decodifica el JWT para obtener nombre/email (sin backend, solo demo)
+                try {
+                    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                    sessionStorage.setItem('offside_user', payload.name || payload.email || 'Usuario');
+                    sessionStorage.setItem('offside_avatar', payload.picture || '');
+                    gsap.to('.login-wrapper', {
+                        opacity: 0, y: -30, duration: .5, ease: 'power2.in',
+                        onComplete: () => { window.location.href = 'onboarding.html'; }
+                    });
+                } catch(e) {
+                    loginSuccess('Usuario Google');
+                }
+            }
+        }
+
+        /* ── Botón Google: OAuth2 Popup real ── */
+        function handleGoogleLogin() {
+            // CLIENT_ID real de Google Cloud Console
+            // Si no está configurado, usa flujo demo
+            const CLIENT_ID = 'TU_CLIENT_ID.apps.googleusercontent.com';
+
+            if (CLIENT_ID.startsWith('TU_')) {
+                // ── MODO DEMO (sin Client ID configurado) ──
+                // Simula login con animación de loading en el botón
+                const btn = document.querySelector('.btn-google');
+                btn.innerHTML = `<div class="spinner" style="width:20px;height:20px;border-width:2px;border-top-color:#006847;"></div> Conectando...`;
+                btn.disabled = true;
+                setTimeout(() => loginSuccess('demo@offside.mx'), 1400);
+                return;
+            }
+
+            // ── MODO REAL: OAuth2 popup ──
+            if (typeof google !== 'undefined' && google.accounts) {
+                const client = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: 'profile email',
+                    callback: async (tokenResponse) => {
+                        if (tokenResponse.access_token) {
+                            // Obtiene datos del usuario con el access token
+                            const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                            });
+                            const user = await res.json();
+                            sessionStorage.setItem('offside_user', user.name || user.email);
+                            sessionStorage.setItem('offside_avatar', user.picture || '');
+                            loginSuccess(user.name || user.email);
+                        }
+                    },
+                });
+                client.requestAccessToken({ prompt: 'select_account' });
+            } else {
+                // SDK no cargó (bloqueador de ads, sin internet, etc.)
+                loginSuccess('demo@offside.mx');
+            }
+        }
+
+        /* ── Email/Password login ── */
+        function handleEmailLogin() {
+            const email = document.getElementById('emailInput').value.trim();
+            const pass  = document.getElementById('passInput').value;
+            if (!email || !pass) {
+                shakeCard(); return;
+            }
+            // Aquí conectas tu backend. Por ahora es demo:
+            loginSuccess(email);
+        }
+
+        /* ── Éxito → redirige a onboarding ── */
+        function loginSuccess(user) {
+            sessionStorage.setItem('offside_user', user);
+            gsap.to('.login-wrapper', {
+                opacity: 0, y: -30, duration: .5, ease: 'power2.in',
+                onComplete: () => { window.location.href = 'onboarding.html'; }
+            });
+        }
+
+        /* ── Shake si falla ── */
+        function shakeCard() {
+            const card = document.querySelector('.login-card');
+            gsap.timeline()
+                .to(card, { x: -12, duration: .08, ease: 'none' })
+                .to(card, { x: 12,  duration: .08, ease: 'none' })
+                .to(card, { x: -8,  duration: .08, ease: 'none' })
+                .to(card, { x: 8,   duration: .08, ease: 'none' })
+                .to(card, { x: 0,   duration: .1,  ease: 'elastic.out(1,0.5)' });
+        }
+    </script>
+</body>
+</html>

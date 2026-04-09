@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFFSIDE 2026 | Wallet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 🚨 HACK WORDPRESS 🚨 */
+        header#masthead, header.site-header, .elementor-location-header, header[data-elementor-type="header"], .ast-primary-header-bar, .site-header { display: none !important; opacity: 0 !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
+        .site-content, .site-main, #content, body { margin-top: 0 !important; padding-top: 0 !important; }
+
+        :root{--mx-green:#c9ff07;--mx-red:#ce1126;--mx-gold:#4d4bea;--mx-dark:#0a0f0d;--mx-gradient:linear-gradient(135deg,var(--mx-green),#009a63,var(--mx-gold));--border:1px solid rgba(255,255,255,0.1);--text-main:#f0ede8;--text-dim:#8a9e94;}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+        body{background-color:var(--mx-dark);color:var(--text-main);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;cursor:none;line-height:1.6;padding-bottom:120px;margin-top:0;}
+        #custom-cursor{width:10px;height:10px;background:var(--mx-gold);border-radius:50%;position:fixed;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);box-shadow:0 0 15px rgba(245,166,35,0.8);transition:width .3s,height .3s,background-color .3s;}
+        #custom-cursor.hovered{width:26px;height:26px;background:var(--mx-red);box-shadow:0 0 25px rgba(206,17,38,0.8);}
+        #cursor-glow{width:500px;height:500px;background:radial-gradient(circle,rgba(0,104,71,.12) 0,rgba(245,166,35,.05) 40%,transparent 65%);position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+        #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:0;}
+        .btn-mx{padding:11px 30px;background:var(--mx-gradient);color:#fff !important;border-radius:50px;font-weight:800;text-transform:uppercase;border:none;box-shadow:0 5px 20px rgba(0,104,71,.4);transition:.4s;cursor:none;}
+        section{padding:80px 10%;position:relative;z-index:1;}
+        .section-header{text-align:center;margin-bottom:50px;}
+        .section-header h2{font-family:'Syne',sans-serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:800;margin-bottom:16px;color:#fff !important;}
+        .section-header p{color:var(--text-dim) !important;font-size:1.05rem;}
+        .gradient-text{background:var(--mx-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .gsap-anim-up{opacity:0;transform:translateY(40px);}
+
+        /* WALLET CARD */
+        .wallet-card{background:var(--mx-gradient);border-radius:28px;padding:40px;position:relative;overflow:hidden;margin-bottom:30px;}
+        .wallet-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:rgba(255,255,255,0.08);border-radius:50%;}
+        .wallet-card::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:rgba(255,255,255,0.05);border-radius:50%;}
+        .wallet-card-label{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.7) !important;margin-bottom:8px;}
+        .wallet-card-balance{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:800;color:#fff !important;margin-bottom:4px;}
+        .wallet-card-sub{font-size:.9rem;color:rgba(255,255,255,0.7) !important;}
+        .wallet-card-info{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;}
+        .wallet-chip{width:44px;height:32px;background:rgba(255,255,255,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;}
+        .wallet-chip i{color:rgba(255,255,255,0.8);font-size:1.1rem;}
+
+        /* ACCIONES */
+        .wallet-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;}
+        .action-btn{background:rgba(255,255,255,0.03);border:var(--border);border-radius:18px;padding:20px;text-align:center;cursor:pointer;transition:.3s;}
+        .action-btn:hover{border-color:rgba(245,166,35,.3);background:rgba(245,166,35,0.06);transform:translateY(-4px);}
+        .action-btn i{font-size:1.4rem;color:var(--mx-gold);display:block;margin-bottom:8px;}
+        .action-btn span{font-size:.8rem;color:#fff;font-weight:600;}
+
+        /* TIPO DE CAMBIO */
+        .rate-box{background:rgba(255,255,255,0.02);border:var(--border);border-radius:24px;padding:28px;margin-bottom:30px;}
+        .rate-box h3{font-size:1rem;font-weight:700;color:#fff !important;margin-bottom:20px;}
+        .rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+        .rate-item{text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:14px;border:var(--border);}
+        .rate-item .flag{font-size:1.8rem;display:block;margin-bottom:6px;}
+        .rate-item .currency{font-size:.75rem;color:var(--text-dim) !important;text-transform:uppercase;}
+        .rate-item .rate-val{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--mx-gold) !important;}
+
+        /* TRANSACCIONES */
+        .txn-list{display:flex;flex-direction:column;gap:12px;}
+        .txn-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.02);border:var(--border);border-radius:14px;padding:16px;transition:.3s;}
+        .txn-item:hover{background:rgba(255,255,255,0.04);}
+        .txn-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+        .txn-icon.green{background:rgba(0,104,71,0.2);}
+        .txn-icon.gold{background:rgba(245,166,35,0.15);}
+        .txn-icon.red{background:rgba(206,17,38,0.15);}
+        .txn-info{flex:1;}
+        .txn-info h4{font-size:.9rem;font-weight:700;color:#fff !important;margin-bottom:2px;}
+        .txn-info p{font-size:.75rem;color:var(--text-dim) !important;}
+        .txn-amount{font-weight:800;font-size:.95rem;}
+        .txn-amount.positive{color:#4ade80;}
+        .txn-amount.negative{color:var(--mx-red);}
+
+        .notif{position:fixed;bottom:100px;right:30px;z-index:9000;display:flex;flex-direction:column;gap:10px;}
+        .notif-item{background:#0e1a13;border:var(--border);border-left:3px solid var(--mx-green);border-radius:14px;padding:14px 18px;max-width:300px;transform:translateX(120%);transition:.4s;}
+        .notif-item.show{transform:translateX(0);}
+        .notif-item h4{font-size:.88rem;color:#fff !important;}
+        .notif-item p{font-size:.78rem;color:var(--text-dim) !important;}
+
+        /* DOCK MACOS */
+        .bottom-nav-deck{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:clamp(10px,2vw,18px);background:rgba(10,15,13,0.65);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);padding:10px 20px;border-radius:40px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 20px 40px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.1);z-index:9000;transition:all .4s;} .bottom-nav-deck:hover{background:rgba(10,15,13,0.85);border-color:rgba(255,255,255,0.2);} .deck-item{color:var(--text-dim);text-decoration:none;font-size:1.25rem;width:45px;height:45px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .3s ease;position:relative;cursor:none;} .deck-item:hover,.deck-item.active{color:#fff;background:rgba(255,255,255,0.1);transform:translateY(-5px) scale(1.1);} .deck-item::after{content:attr(data-tooltip);position:absolute;top:-45px;background:rgba(0,0,0,0.8);color:#fff;font-size:.75rem;font-weight:600;padding:6px 12px;border-radius:8px;opacity:0;pointer-events:none;transform:translateY(10px);transition:all .3s;white-space:nowrap;border:1px solid rgba(255,255,255,0.1);} .deck-item:hover::after{opacity:1;transform:translateY(0);} .deck-item.home-btn{background:var(--mx-gradient);color:#fff!important;width:55px;height:55px;font-size:1.4rem;transform:translateY(-15px);box-shadow:0 10px 25px rgba(0,104,71,0.5);border:3px solid var(--mx-dark);} .deck-item.home-btn:hover{transform:translateY(-20px) scale(1.05);} .deck-item.emergency{color:var(--mx-red);} .deck-item.emergency:hover{background:rgba(206,17,38,0.15);color:#ff4d4d;}
+        @media(max-width:900px){.wallet-actions{grid-template-columns:repeat(2,1fr);}.rate-grid{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:600px){section{padding:60px 5%;}.bottom-nav-deck{width:95%;padding:8px 12px;gap:5px;border-radius:30px;bottom:15px;}.deck-item{width:38px;height:38px;font-size:1.1rem;}.deck-item.home-btn{width:48px;height:48px;font-size:1.2rem;transform:translateY(-10px);}.deck-item::after{display:none;}}
+    </style>
+</head>
+<body>
+    <div id="custom-cursor"></div><div id="cursor-glow"></div><canvas id="bg-canvas"></canvas><div class="notif" id="notifContainer"></div>
+
+    <nav class="bottom-nav-deck">
+        <a href="restaurantes.html" class="deck-item hover-trigger" data-tooltip="Comida"><i class="fas fa-utensils"></i></a>
+        <a href="mapa.html" class="deck-item hover-trigger" data-tooltip="Mapa"><i class="fas fa-map-marker-alt"></i></a>
+        <a href="index.html" class="deck-item home-btn hover-trigger" data-tooltip="Inicio"><i class="fas fa-home"></i></a>
+        <a href="wallet.html" class="deck-item active hover-trigger" data-tooltip="Wallet"><i class="fas fa-wallet"></i></a>
+        <a href="sos.html" class="deck-item emergency hover-trigger" data-tooltip="SOS"><i class="fas fa-shield-alt"></i></a>
+    </nav>
+
+    <section id="wallet">
+        <div class="section-header gsap-anim-up">
+            <h2>Tu <span class="gradient-text">Wallet</span></h2>
+            <p>Gestiona tu dinero y consulta el tipo de cambio en tiempo real</p>
+        </div>
+
+        <!-- Tarjeta principal -->
+        <div class="wallet-card gsap-anim-up">
+            <div class="wallet-card-info">
+                <div>
+                    <p class="wallet-card-label">Saldo disponible</p>
+                    <p class="wallet-card-balance">$2,450.00 <span style="font-size:1.2rem;opacity:.7;">MXN</span></p>
+                    <p class="wallet-card-sub">≈ $137.57 USD · $126.20 EUR</p>
+                </div>
+                <div class="wallet-chip"><i class="fas fa-wifi"></i></div>
+            </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="wallet-actions gsap-anim-up">
+            <div class="action-btn hover-trigger" onclick="showNotif('💸 Enviar dinero','Función próximamente disponible','warn')">
+                <i class="fas fa-paper-plane"></i><span>Enviar</span>
+            </div>
+            <div class="action-btn hover-trigger" onclick="showNotif('📥 Recibir','Función próximamente disponible','warn')">
+                <i class="fas fa-download"></i><span>Recibir</span>
+            </div>
+            <div class="action-btn hover-trigger" onclick="showNotif('💳 Recargar','Función próximamente disponible','warn')">
+                <i class="fas fa-plus-circle"></i><span>Recargar</span>
+            </div>
+            <div class="action-btn hover-trigger" onclick="showNotif('📊 Historial','Mostrando transacciones','success')">
+                <i class="fas fa-chart-line"></i><span>Historial</span>
+            </div>
+        </div>
+        <!-- Transacciones recientes -->
+        <div class="gsap-anim-up">
+            <h3 style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:16px;"><i class="fas fa-clock" style="color:var(--mx-gold);margin-right:8px;"></i> Movimientos recientes</h3>
+            <div class="txn-list">
+                <div class="txn-item"><div class="txn-icon green"><i class="fas fa-utensils" style="color:#4ade80;"></i></div><div class="txn-info"><h4>La Taquería de Don Memo</h4><p>Hoy · 14:32 · Comida</p></div><span class="txn-amount negative">-$180.00</span></div>
+                <div class="txn-item"><div class="txn-icon gold"><i class="fas fa-taxi" style="color:var(--mx-gold);"></i></div><div class="txn-info"><h4>Transporte CDMX</h4><p>Hoy · 11:15 · Taxi</p></div><span class="txn-amount negative">-$95.00</span></div>
+                <div class="txn-item"><div class="txn-icon green"><i class="fas fa-plus" style="color:#4ade80;"></i></div><div class="txn-info"><h4>Recarga de saldo</h4><p>Ayer · 20:00 · Recarga</p></div><span class="txn-amount positive">+$1,000.00</span></div>
+                <div class="txn-item"><div class="txn-icon red"><i class="fas fa-bed" style="color:var(--mx-red);"></i></div><div class="txn-info"><h4>Hotel Zócalo Centro</h4><p>Ayer · 16:00 · Hospedaje</p></div><span class="txn-amount negative">-$850.00</span></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const cursor=document.getElementById('custom-cursor');const glow=document.getElementById('cursor-glow');let mx=0,my=0;
+        document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';glow.animate({left:`${mx}px`,top:`${my}px`},{duration:800,fill:'forwards'});});
+        document.querySelectorAll('.hover-trigger,a,button,select,input').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hovered'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hovered'));});
+        const canvas=document.getElementById('bg-canvas');const ctx=canvas.getContext('2d');let stars=[];
+        class Star{constructor(){this.x=Math.random()*window.innerWidth;this.y=Math.random()*window.innerHeight;this.size=Math.random()*1.5;this.baseX=this.x;this.baseY=this.y;this.density=Math.random()*30+1;this.color=Math.random()>.8?'#f5a623':Math.random()>.5?'#006847':'#fff';}draw(){ctx.fillStyle=this.color;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,2*Math.PI);ctx.fill();}update(){let dx=mx-this.x,dy=my-this.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){this.x-=dx/dist*((120-dist)/120)*this.density;this.y-=dy/dist*((120-dist)/120)*this.density;}else{this.x+=.05*(this.baseX-this.x);this.y+=.05*(this.baseY-this.y);}}}
+        function initStars(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;stars=[];for(let i=0;i<200;i++)stars.push(new Star());}
+        function animateStars(){ctx.clearRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{s.update();s.draw();});requestAnimationFrame(animateStars);}
+        window.addEventListener('resize',initStars);initStars();animateStars();
+        function showNotif(title,msg,type='success'){const container=document.getElementById('notifContainer');const el=document.createElement('div');el.className='notif-item';el.style.borderLeftColor=type==='success'?'var(--mx-green)':type==='warn'?'var(--mx-gold)':'var(--mx-red)';el.innerHTML=`<h4>${title}</h4><p>${msg}</p>`;container.appendChild(el);setTimeout(()=>el.classList.add('show'),50);setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),400);},4000);}
+        gsap.registerPlugin(ScrollTrigger);gsap.utils.toArray('.gsap-anim-up').forEach(el=>{gsap.fromTo(el,{opacity:0,y:40},{opacity:1,y:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}});});
+    </script>
+</body>
+</html>

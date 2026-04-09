@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFFSIDE 2026 | Bienvenida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 🚨 HACK WORDPRESS 🚨 */
+        header#masthead, header.site-header, .elementor-location-header, header[data-elementor-type="header"], .ast-primary-header-bar, .site-header { display: none !important; opacity: 0 !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
+        .site-content, .site-main, #content, body { margin-top: 0 !important; padding-top: 0 !important; }
+
+        :root {
+            --mx-green: #006847; --mx-red: #ce1126; --mx-gold: #f5a623;
+            --mx-dark: #0a0f0d;
+            --mx-gradient: linear-gradient(135deg, var(--mx-green), #009a63, var(--mx-gold));
+            --glass: rgba(10,15,13,0.75); --border: 1px solid rgba(255,255,255,0.1);
+            --text-main: #f0ede8; --text-dim: #8a9e94;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--mx-dark); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; cursor: none; line-height: 1.6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+
+        /* ── Cursor ── */
+        #custom-cursor { width: 10px; height: 10px; background: var(--mx-gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000; transform: translate(-50%,-50%); box-shadow: 0 0 15px rgba(245,166,35,0.8); transition: width .3s, height .3s, background-color .3s; }
+        #custom-cursor.hovered { width: 26px; height: 26px; background: var(--mx-red); box-shadow: 0 0 25px rgba(206,17,38,0.8); }
+        #cursor-glow { width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,104,71,.12) 0, rgba(245,166,35,.05) 40%, transparent 65%); position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: screen; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; }
+
+        /* ── Wrapper ── */
+        .onboard-wrapper { position: relative; z-index: 2; width: 100%; max-width: 600px; }
+
+        /* ── Top logo ── */
+        .ob-logo { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; color: #fff; text-align: center; margin-bottom: 28px; opacity: 0; }
+        .ob-logo span { background: var(--mx-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* ── Step indicator ── */
+        .step-bar { display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 32px; opacity: 0; }
+        .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all .4s; }
+        .step-dot.active { width: 28px; border-radius: 50px; background: var(--mx-gold); }
+        .step-dot.done { background: var(--mx-green); }
+
+        /* ── Card ── */
+        .ob-card { background: rgba(15,22,17,0.88); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: var(--border); border-radius: 28px; padding: 44px 40px 36px; box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07); opacity: 0; transform: translateY(30px); }
+
+        /* ── Step screens ── */
+        .step-screen { display: none; }
+        .step-screen.active { display: block; }
+
+        /* ── Type selector (step 0) ── */
+        .type-title { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .type-sub { font-size: .9rem; color: var(--text-dim); margin-bottom: 32px; }
+        .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .type-card { border: 2px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px 20px; text-align: center; cursor: none; transition: all .35s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: rgba(255,255,255,0.02); }
+        .type-card:hover { border-color: rgba(245,166,35,0.4); background: rgba(245,166,35,0.05); transform: translateY(-4px); }
+        .type-card.selected { border-color: var(--mx-gold); background: rgba(245,166,35,0.1); box-shadow: 0 0 0 3px rgba(245,166,35,0.15); }
+        .type-card .type-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+        .type-card h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .type-card p { font-size: .78rem; color: var(--text-dim); line-height: 1.5; }
+
+        /* ── Form elements ── */
+        .form-section-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .form-section-sub { font-size: .88rem; color: var(--text-dim); margin-bottom: 28px; }
+        .form-grid { display: flex; flex-direction: column; gap: 18px; }
+        .form-group { display: flex; flex-direction: column; gap: 7px; }
+        .form-group label { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 12px 16px; color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem;
+            outline: none; transition: .3s; cursor: none; width: 100%;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--mx-gold); background: rgba(245,166,35,0.06); }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.2); }
+        .form-group select option { background: #0a0f0d; color: #fff; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        /* ── Checkbox chips ── */
+        .chips-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 50px; padding: 7px 16px; font-size: .8rem; color: var(--text-dim); cursor: none; transition: all .25s; user-select: none; }
+        .chip:hover { border-color: rgba(245,166,35,0.4); color: #fff; }
+        .chip.selected { background: rgba(245,166,35,0.15); border-color: var(--mx-gold); color: var(--mx-gold); }
+        .chip input { display: none; }
+
+        /* ── Upload zone ── */
+        .upload-zone { border: 2px dashed rgba(255,255,255,0.15); border-radius: 16px; padding: 32px; text-align: center; transition: .3s; cursor: none; position: relative; overflow: hidden; }
+        .upload-zone:hover { border-color: rgba(245,166,35,0.4); background: rgba(245,166,35,0.04); }
+        .upload-zone.has-file { border-color: var(--mx-green); background: rgba(0,104,71,0.08); }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: none; width: 100%; height: 100%; }
+        .upload-icon { font-size: 2rem; color: var(--text-dim); margin-bottom: 10px; display: block; transition: .3s; }
+        .upload-zone:hover .upload-icon { color: var(--mx-gold); }
+        .upload-zone p { font-size: .85rem; color: var(--text-dim); }
+        .upload-zone span { font-size: .75rem; color: rgba(255,255,255,0.2); display: block; margin-top: 4px; }
+        #uploadName { font-size: .8rem; color: var(--mx-green); margin-top: 8px; font-weight: 600; display: none; }
+
+        /* ── 2-col grid ── */
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        /* ── Buttons ── */
+        .ob-actions { display: flex; gap: 12px; margin-top: 28px; }
+        .btn-back { flex: 0 0 auto; padding: 13px 22px; background: rgba(255,255,255,0.06); border: var(--border); border-radius: 14px; color: var(--text-dim); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: .88rem; cursor: none; transition: .3s; }
+        .btn-back:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-next { flex: 1; padding: 14px; background: var(--mx-gradient); color: #fff; border: none; border-radius: 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: .92rem; text-transform: uppercase; letter-spacing: 1px; cursor: none; transition: .4s; box-shadow: 0 5px 20px rgba(0,104,71,.35); }
+        .btn-next:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(245,166,35,.3); }
+
+        /* ── Loading overlay ── */
+        #loadingOverlay { position: fixed; inset: 0; background: var(--mx-dark); z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; transition: opacity .5s; }
+        #loadingOverlay .load-logo { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; background: var(--mx-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.08); border-top-color: var(--mx-gold); border-radius: 50%; animation: spin .7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Success screen ── */
+        .success-screen { text-align: center; padding: 20px 0; }
+        .success-icon { font-size: 4rem; margin-bottom: 20px; display: block; animation: popIn .6s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .success-screen h2 { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .success-screen p { color: var(--text-dim); font-size: .95rem; margin-bottom: 28px; }
+
+        /* ── Responsive ── */
+        @media(max-width: 600px) {
+            .ob-card { padding: 28px 20px 24px; }
+            .type-grid { grid-template-columns: 1fr; }
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay"><div class="load-logo">OFFSIDE</div><div class="spinner"></div></div>
+
+    <div id="custom-cursor"></div>
+    <div id="cursor-glow"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="onboard-wrapper">
+
+        <div class="ob-logo">OFF<span>SIDE</span> <span style="font-size:1rem;font-weight:400;letter-spacing:0;opacity:.5;">2026</span></div>
+
+        <!-- Step dots: 0=tipo, 1=encuesta, 2=listo -->
+        <div class="step-bar" id="stepBar">
+            <div class="step-dot active" id="dot0"></div>
+            <div class="step-dot" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+        </div>
+
+        <div class="ob-card" id="obCard">
+
+            <!-- ── STEP 0: Elegir tipo ── -->
+            <div class="step-screen active" id="step0">
+                <div class="type-title">¿Cómo usarás OFFSIDE?</div>
+                <div class="type-sub">Cuéntanos un poco sobre ti para personalizar tu experiencia.</div>
+                <div class="type-grid">
+                    <div class="type-card hover-trigger" id="cardTurista" onclick="selectType('turista')">
+                        <span class="type-icon">✈️</span>
+                        <h3>Soy Turista</h3>
+                        <p>Estoy visitando México para el Mundial 2026 y quiero descubrir lo mejor.</p>
+                    </div>
+                    <div class="type-card hover-trigger" id="cardNegocio" onclick="selectType('negocio')">
+                        <span class="type-icon">🏪</span>
+                        <h3>Tengo un Negocio</h3>
+                        <p>Quiero registrar mi restaurante, hospedaje o servicio en la plataforma.</p>
+                    </div>
+                </div>
+                <div class="ob-actions">
+                    <button class="btn-next hover-trigger" onclick="goNext()" style="margin-top:0;">Continuar <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+                </div>
+            </div>
+
+            <!-- ── STEP 1A: Turista ── -->
+            <div class="step-screen" id="step1turista">
+                <div class="form-section-title">Cuéntanos sobre ti <span style="font-size:1.4rem;">🌍</span></div>
+                <div class="form-section-sub">Así podemos darte recomendaciones perfectas para tu visita.</div>
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>¿Cómo te gustaría que te llamemos?</label>
+                        <input type="text" id="turistaNombre" placeholder="Tu nombre o apodo" class="hover-trigger">
+                    </div>
+
+                    <div class="form-group">
+                        <label>¿De qué país vienes?</label>
+                        <select id="turistaPais" class="hover-trigger">
+                            <option value="">Selecciona tu país</option>
+                            <option>🇺🇸 Estados Unidos</option>
+                            <option>🇨🇦 Canadá</option>
+                            <option>🇬🇧 Reino Unido</option>
+                            <option>🇩🇪 Alemania</option>
+                            <option>🇫🇷 Francia</option>
+                            <option>🇪🇸 España</option>
+                            <option>🇮🇹 Italia</option>
+                            <option>🇧🇷 Brasil</option>
+                            <option>🇦🇷 Argentina</option>
+                            <option>🇨🇴 Colombia</option>
+                            <option>🇯🇵 Japón</option>
+                            <option>🇰🇷 Corea del Sur</option>
+                            <option>🇦🇺 Australia</option>
+                            <option>🇳🇱 Países Bajos</option>
+                            <option>🇵🇹 Portugal</option>
+                            <option>🇲🇦 Marruecos</option>
+                            <option>🇸🇦 Arabia Saudita</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>¿Tienes alguna alergia alimentaria?</label>
+                        <div class="chips-group" id="alergias">
+                            <label class="chip hover-trigger"><input type="checkbox" value="gluten"> 🌾 Gluten</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="lactosa"> 🥛 Lactosa</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="mariscos"> 🦐 Mariscos</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="nueces"> 🥜 Nueces</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="huevo"> 🥚 Huevo</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="soya"> 🫘 Soya</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="ninguna"> ✅ Ninguna</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dieta o preferencias alimentarias</label>
+                        <div class="chips-group" id="dietas">
+                            <label class="chip hover-trigger"><input type="checkbox" value="vegano"> 🌿 Vegano</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="vegetariano"> 🥗 Vegetariano</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="halal"> ☪️ Halal</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="kosher"> ✡️ Kosher</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="sin restriccion"> 🍖 Sin restricción</label>
+                            <label class="chip hover-trigger"><input type="checkbox" value="picante"> 🌶️ Me encanta el picante</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="ob-actions">
+                    <button class="btn-back hover-trigger" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                    <button class="btn-next hover-trigger" onclick="finishTurista()">Entrar a OFFSIDE <i class="fas fa-futbol" style="margin-left:6px;"></i></button>
+                </div>
+            </div>
+
+            <!-- ── STEP 1B: Negocio ── -->
+            <div class="step-screen" id="step1negocio">
+                <div class="form-section-title">Registra tu negocio <span style="font-size:1.4rem;">🏪</span></div>
+                <div class="form-section-sub">Llega a miles de turistas durante el Mundial 2026.</div>
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Nombre del negocio</label>
+                        <input type="text" id="negNombre" placeholder="Ej. La Taquería de Don Memo" class="hover-trigger">
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Tipo de negocio</label>
+                            <select id="negTipo" class="hover-trigger">
+                                <option value="">Selecciona...</option>
+                                <option>🍽️ Restaurante</option>
+                                <option>🌮 Taquería</option>
+                                <option>🌭Street Food</option>
+                                <option>👨‍🍳Antojitos</option>
+                                <option>🍕 Pizzería</option>                                
+                                <option>Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ciudad</label>
+                            <select id="negCiudad" class="hover-trigger">
+                                <option value="">Selecciona...</option>
+                                <option>Ciudad de México</option>
+                                <option>Guadalajara</option>
+                                <option>Monterrey</option>
+                                <option>Puebla</option>
+                                <option>Querétaro</option>
+                                <option>San Luis Potosí</option>
+                                <option>Otra ciudad</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dirección completa</label>
+                        <input type="text" id="negDireccion" placeholder="Calle, número, colonia" class="hover-trigger">
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Teléfono de contacto</label>
+                            <input type="tel" id="negTel" placeholder="+52 55 0000 0000" class="hover-trigger">
+                        </div>
+                        <div class="form-group">
+                            <label>Horario de atención</label>
+                            <input type="text" id="negHorario" placeholder="Ej. 8am – 10pm" class="hover-trigger">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción breve de tu negocio</label>
+                        <textarea id="negDesc" placeholder="Cuéntanos qué ofreces, tu especialidad, lo que te hace único..." class="hover-trigger"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sube tu menú / carta (imagen o PDF)</label>
+                        <div class="upload-zone hover-trigger" id="uploadZone">
+                            <input type="file" id="menuFile" accept="image/*,.pdf" onchange="handleUpload(this)">
+                            <span class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                            <p>Arrastra tu menú aquí o haz clic para seleccionar</p>
+                            <span>JPG, PNG, PDF · Máx. 10 MB</span>
+                            <div id="uploadName"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="ob-actions">
+                    <button class="btn-back hover-trigger" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                    <button class="btn-next hover-trigger" onclick="finishNegocio()">Registrar negocio <i class="fas fa-store" style="margin-left:6px;"></i></button>
+                </div>
+            </div>
+
+            <!-- ── STEP 2: Éxito ── -->
+            <div class="step-screen" id="step2">
+                <div class="success-screen">
+                    <span class="success-icon" id="successIcon">🎉</span>
+                    <h2 id="successTitle">¡Todo listo!</h2>
+                    <p id="successMsg">Tu perfil está configurado. Bienvenido a OFFSIDE 2026.</p>
+                    <button class="btn-next hover-trigger" style="max-width:320px;margin:0 auto;display:block;" onclick="goToApp()">
+                        Explorar OFFSIDE <i class="fas fa-arrow-right" style="margin-left:6px;"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div><!-- /ob-card -->
+    </div><!-- /wrapper -->
+
+    <script>
+        /* ── Cursor ── */
+        const cursor = document.getElementById('custom-cursor');
+        const glow = document.getElementById('cursor-glow');
+        let mx = 0, my = 0;
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+            glow.animate({ left: `${mx}px`, top: `${my}px` }, { duration: 800, fill: 'forwards' });
+        });
+        function refreshCursorTargets() {
+            document.querySelectorAll('.hover-trigger, a, button, select, input, textarea, label').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
+        refreshCursorTargets();
+
+        /* ── Canvas Stars ── */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        class Star {
+            constructor() { this.x=Math.random()*window.innerWidth;this.y=Math.random()*window.innerHeight;this.size=Math.random()*1.5;this.baseX=this.x;this.baseY=this.y;this.density=Math.random()*30+1;this.color=Math.random()>.8?'#f5a623':Math.random()>.5?'#006847':'#fff'; }
+            draw() { ctx.fillStyle=this.color;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,2*Math.PI);ctx.fill(); }
+            update() { let dx=mx-this.x,dy=my-this.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){this.x-=dx/dist*((120-dist)/120)*this.density;this.y-=dy/dist*((120-dist)/120)*this.density;}else{this.x+=.05*(this.baseX-this.x);this.y+=.05*(this.baseY-this.y);} }
+        }
+        function initStars(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;stars=[];for(let i=0;i<200;i++)stars.push(new Star());}
+        function animateStars(){ctx.clearRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{s.update();s.draw();});requestAnimationFrame(animateStars);}
+        window.addEventListener('resize',initStars);initStars();animateStars();
+
+        /* ── Loading ── */
+        window.addEventListener('load', () => {
+            const overlay = document.getElementById('loadingOverlay');
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 500);
+                gsap.to('.ob-logo',   { opacity: 1, duration: .7, ease: 'power3.out', delay: .1 });
+                gsap.to('.step-bar',  { opacity: 1, duration: .7, ease: 'power3.out', delay: .2 });
+                gsap.to('#obCard',    { opacity: 1, y: 0, duration: .9, ease: 'power3.out', delay: .3 });
+            }, 800);
+        });
+
+        /* ── State ── */
+        let userType = null; // 'turista' | 'negocio'
+        let currentStep = 0;
+
+        /* ── Chip toggle ── */
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', () => chip.classList.toggle('selected'));
+        });
+
+        /* ── Type selection ── */
+        function selectType(type) {
+            userType = type;
+            document.getElementById('cardTurista').classList.toggle('selected', type === 'turista');
+            document.getElementById('cardNegocio').classList.toggle('selected', type === 'negocio');
+        }
+
+        /* ── Step dots ── */
+        function updateDots(step) {
+            for (let i = 0; i < 3; i++) {
+                const dot = document.getElementById('dot' + i);
+                dot.className = 'step-dot' + (i < step ? ' done' : i === step ? ' active' : '');
+            }
+        }
+
+        /* ── Navigate ── */
+        function showScreen(id) {
+            document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            gsap.fromTo('#obCard', { opacity: .6, y: 12 }, { opacity: 1, y: 0, duration: .5, ease: 'power3.out' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goNext() {
+            if (!userType) { shakeCard(); return; }
+            currentStep = 1;
+            updateDots(1);
+            showScreen('step1' + userType);
+        }
+
+        function goBack() {
+            currentStep = 0;
+            updateDots(0);
+            showScreen('step0');
+        }
+
+        /* ── Finish turista ── */
+        function finishTurista() {
+            const nombre = document.getElementById('turistaNombre').value.trim();
+            const pais   = document.getElementById('turistaPais').value;
+            if (!nombre || !pais) { shakeCard(); return; }
+
+            const alergias = [...document.querySelectorAll('#alergias .chip.selected input')].map(i => i.value);
+            const dietas   = [...document.querySelectorAll('#dietas .chip.selected input')].map(i => i.value);
+
+            // Guardar perfil
+            sessionStorage.setItem('offside_profile', JSON.stringify({ tipo: 'turista', nombre, pais, alergias, dietas }));
+
+            currentStep = 2;
+            updateDots(2);
+            document.getElementById('successIcon').textContent = '🎉';
+            document.getElementById('successTitle').textContent = `¡Bienvenido, ${nombre}!`;
+            document.getElementById('successMsg').textContent = 'Tu perfil de viajero está listo. Ahora descubre los mejores restaurantes, transporte y más.';
+            showScreen('step2');
+        }
+
+        /* ── Finish negocio ── */
+        function finishNegocio() {
+            const nombre    = document.getElementById('negNombre').value.trim();
+            const tipo      = document.getElementById('negTipo').value;
+            const ciudad    = document.getElementById('negCiudad').value;
+            const direccion = document.getElementById('negDireccion').value.trim();
+            if (!nombre || !tipo || !ciudad || !direccion) { shakeCard(); return; }
+
+            sessionStorage.setItem('offside_profile', JSON.stringify({
+                tipo: 'negocio', nombre, tipoBiz: tipo, ciudad, direccion,
+                tel: document.getElementById('negTel').value,
+                horario: document.getElementById('negHorario').value,
+                desc: document.getElementById('negDesc').value
+            }));
+
+            currentStep = 2;
+            updateDots(2);
+            document.getElementById('successIcon').textContent = '🏪';
+            document.getElementById('successTitle').textContent = '¡Negocio registrado!';
+            document.getElementById('successMsg').textContent = `"${nombre}" ya está en proceso de verificación. Te notificaremos cuando aparezca en OFFSIDE.`;
+            showScreen('step2');
+        }
+
+        /* ── Upload handler ── */
+        function handleUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const zone = document.getElementById('uploadZone');
+            const nameEl = document.getElementById('uploadName');
+            zone.classList.add('has-file');
+            zone.querySelector('.upload-icon').innerHTML = '<i class="fas fa-check-circle" style="color:var(--mx-green);"></i>';
+            nameEl.textContent = '✓ ' + file.name;
+            nameEl.style.display = 'block';
+        }
+
+        /* ── Go to app ── */
+        function goToApp() {
+            gsap.to('.onboard-wrapper', {
+                opacity: 0, y: -30, duration: .5, ease: 'power2.in',
+                onComplete: () => { window.location.href = 'index.html'; }
+            });
+        }
+
+        /* ── Shake on error ── */
+        function shakeCard() {
+            gsap.to('#obCard', { x: -10, duration: .08, yoyo: true, repeat: 5, ease: 'none', onComplete: () => gsap.set('#obCard', { x: 0 }) });
+        }
+    </script>
+</body>
+</html>
